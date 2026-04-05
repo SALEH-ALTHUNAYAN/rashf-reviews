@@ -3,283 +3,665 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>رشف ريفيوز - تقارير التقييمات</title>
+<title>رشف ريفيوز</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg:#0a0a0f; --surface:#12121a; --card:#1a1a26; --border:#2a2a3f;
-    --accent:#c8a96e; --accent2:#e8c98e; --text:#e8e8f0; --text-muted:#7070a0;
-    --green:#4caf7d; --red:#e05a5a; --star:#f5c842;
-  }
-  *{margin:0;padding:0;box-sizing:border-box;}
-  body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
-  body::before{content:'';position:fixed;top:-50%;right:-20%;width:600px;height:600px;background:radial-gradient(circle,rgba(200,169,110,.06) 0%,transparent 70%);border-radius:50%;animation:pulse 8s ease-in-out infinite;pointer-events:none;}
-  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .header{padding:20px 40px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(10,10,15,.92);backdrop-filter:blur(20px);z-index:100;}
-  .logo{display:flex;align-items:center;gap:12px;}
-  .logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#0a0a0f;}
-  .logo-text{font-size:18px;font-weight:700;color:var(--accent2);}
-  .logo-sub{font-size:11px;color:var(--text-muted);}
-  .container{max-width:1100px;margin:0 auto;padding:40px 24px;}
-  #auth-section{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:75vh;animation:fadeIn .5s ease;}
-  .auth-card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:56px 48px;max-width:480px;width:100%;position:relative;overflow:hidden;text-align:center;}
-  .auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent));}
-  .auth-icon{font-size:56px;margin-bottom:18px;}
-  .auth-title{font-size:26px;font-weight:800;margin-bottom:10px;}
-  .auth-desc{font-size:14px;color:var(--text-muted);line-height:1.8;margin-bottom:32px;}
-  .btn-primary{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:15px 24px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f;border:none;border-radius:13px;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s ease;}
-  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(200,169,110,.3);}
-  #dashboard-section{display:none;animation:fadeIn .5s ease;}
-  .page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:16px;}
-  .page-title{font-size:28px;font-weight:800;}
-  .page-sub{font-size:13px;color:var(--text-muted);margin-top:4px;}
-  .header-actions{display:flex;gap:10px;}
-  .btn-outline{padding:10px 20px;background:transparent;border:1px solid var(--border);border-radius:10px;color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
-  .btn-outline:hover{border-color:var(--accent);color:var(--accent);}
-  .btn-solid{padding:10px 20px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:10px;color:#0a0a0f;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
-  .btn-solid:hover{box-shadow:0 6px 18px rgba(200,169,110,.3);}
-  .controls{display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap;align-items:center;}
-  .sel-wrap{position:relative;}
-  .sel-wrap select{padding:10px 36px 10px 14px;background:var(--card);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:13px;cursor:pointer;appearance:none;outline:none;transition:border-color .2s;}
-  .sel-wrap select:focus{border-color:var(--accent);}
-  .sel-wrap::after{content:'▾';position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-muted);pointer-events:none;}
-  .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:28px;}
-  .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden;transition:border-color .2s;}
-  .stat-card:hover{border-color:var(--accent);}
-  .stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);}
-  .stat-label{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
-  .stat-value{font-size:30px;font-weight:800;color:var(--accent2);line-height:1;}
-  .stat-sub{font-size:11px;color:var(--text-muted);margin-top:4px;}
-  .panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:22px;}
-  .panel-title{font-size:15px;font-weight:700;margin-bottom:18px;}
-  .star-row{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
-  .star-lbl{font-size:13px;color:var(--star);width:80px;text-align:right;}
-  .bar-bg{flex:1;height:7px;background:var(--border);border-radius:4px;overflow:hidden;}
-  .bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 1s ease;}
-  .bar-cnt{font-size:12px;color:var(--text-muted);width:32px;text-align:left;}
-  .review-item{border-bottom:1px solid var(--border);padding:15px 0;animation:fadeIn .3s ease;}
-  .review-item:last-child{border-bottom:none;}
-  .review-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px;gap:10px;}
-  .rev-info{display:flex;align-items:center;gap:9px;}
-  .rev-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#5a9be0);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#0a0a0f;flex-shrink:0;}
-  .rev-name{font-size:13px;font-weight:600;}
-  .rev-meta{font-size:11px;color:var(--text-muted);margin-top:2px;}
-  .rev-stars{color:var(--star);font-size:13px;flex-shrink:0;}
-  .rev-text{font-size:13px;color:var(--text-muted);line-height:1.7;padding-right:43px;}
-  .branch-badge{font-size:10px;background:rgba(200,169,110,.12);color:var(--accent);padding:2px 7px;border-radius:4px;margin-right:6px;}
-  .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:50px;gap:14px;}
-  .spinner{width:36px;height:36px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
-  .loading-text{font-size:13px;color:var(--text-muted);}
-  .empty{text-align:center;padding:50px;color:var(--text-muted);}
-  .empty-icon{font-size:44px;margin-bottom:14px;}
-  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px 22px;font-size:14px;font-weight:500;transition:transform .3s ease;z-index:999;white-space:nowrap;}
-  .toast.show{transform:translateX(-50%) translateY(0);}
-  .toast.ok{border-color:var(--green);color:var(--green);}
-  .toast.err{border-color:var(--red);color:var(--red);}
-  .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
-  .overlay.show{display:flex;}
-  .modal{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:32px;max-width:420px;width:90%;animation:fadeIn .3s ease;}
-  .modal-title{font-size:18px;font-weight:700;margin-bottom:6px;}
-  .modal-desc{font-size:13px;color:var(--text-muted);line-height:1.7;margin-bottom:22px;}
-  .form-group{margin-bottom:14px;}
-  .form-label{display:block;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
-  .form-input{width:100%;padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
-  .form-input:focus{border-color:var(--accent);}
-  .modal-actions{display:flex;gap:10px;margin-top:20px;}
-  .btn-cancel{flex:1;padding:11px;background:transparent;border:1px solid var(--border);border-radius:9px;color:var(--text-muted);font-family:'Tajawal',sans-serif;font-size:13px;cursor:pointer;}
-  .btn-confirm{flex:2;padding:11px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:9px;color:#0a0a0f;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
-  @media(max-width:600px){.header{padding:14px 16px;}.container{padding:20px 14px;}.auth-card{padding:32px 20px;}.controls{flex-direction:column;}}
+:root{--bg:#0a0a0f;--surface:#12121a;--card:#1a1a26;--border:#2a2a3f;--accent:#c8a96e;--accent2:#e8c98e;--text:#e8e8f0;--muted:#7070a0;--green:#4caf7d;--red:#e05a5a;--blue:#5a9be0;--star:#f5c842;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Tajawal',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body::before{content:'';position:fixed;top:-50%;right:-20%;width:700px;height:700px;background:radial-gradient(circle,rgba(200,169,110,.05) 0%,transparent 70%);border-radius:50%;animation:pulse 9s ease-in-out infinite;pointer-events:none;}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* HEADER */
+.header{padding:18px 36px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:rgba(10,10,15,.93);backdrop-filter:blur(20px);z-index:100;}
+.logo{display:flex;align-items:center;gap:11px;}
+.logo-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#0a0a0f;}
+.logo-text{font-size:17px;font-weight:700;color:var(--accent2);}
+.logo-sub{font-size:11px;color:var(--muted);}
+.container{max-width:1200px;margin:0 auto;padding:36px 22px;}
+
+/* AUTH */
+#auth-section{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:75vh;animation:fadeIn .5s ease;}
+.auth-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:52px 44px;max-width:460px;width:100%;position:relative;overflow:hidden;text-align:center;}
+.auth-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--accent));}
+.auth-icon{font-size:52px;margin-bottom:16px;}
+.auth-title{font-size:24px;font-weight:800;margin-bottom:10px;}
+.auth-desc{font-size:14px;color:var(--muted);line-height:1.8;margin-bottom:30px;}
+.btn-google{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:14px 22px;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#0a0a0f;border:none;border-radius:12px;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:all .3s;}
+.btn-google:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(200,169,110,.3);}
+
+/* DASHBOARD */
+#dash{display:none;animation:fadeIn .5s ease;}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:14px;}
+.page-title{font-size:26px;font-weight:800;}
+.page-sub{font-size:12px;color:var(--muted);margin-top:3px;}
+.hdr-btns{display:flex;gap:8px;flex-wrap:wrap;}
+.btn-outline{padding:9px 18px;background:transparent;border:1px solid var(--border);border-radius:9px;color:var(--muted);font-family:'Tajawal',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-outline:hover{border-color:var(--accent);color:var(--accent);}
+.btn-solid{padding:9px 18px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:9px;color:#0a0a0f;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
+.btn-solid:hover{box-shadow:0 6px 16px rgba(200,169,110,.3);}
+
+/* FILTERS */
+.filters{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;margin-bottom:22px;display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;}
+.filter-group{display:flex;flex-direction:column;gap:5px;}
+.filter-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;}
+.sel-wrap{position:relative;}
+.sel-wrap select,.filter-input{padding:9px 32px 9px 12px;background:var(--surface);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:13px;cursor:pointer;appearance:none;outline:none;transition:border-color .2s;min-width:150px;}
+.sel-wrap select:focus,.filter-input:focus{border-color:var(--accent);}
+.sel-wrap::after{content:'▾';position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none;font-size:12px;}
+.filter-input{padding:9px 12px;min-width:130px;}
+.quick-btns{display:flex;gap:6px;flex-wrap:wrap;}
+.qbtn{padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:'Tajawal',sans-serif;font-size:12px;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.qbtn:hover,.qbtn.active{background:rgba(200,169,110,.12);border-color:var(--accent);color:var(--accent2);}
+.btn-apply{padding:9px 20px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:9px;color:#0a0a0f;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;}
+
+/* STATS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:22px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px 18px;position:relative;overflow:hidden;transition:border-color .2s;}
+.stat-card:hover{border-color:var(--accent);}
+.stat-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);}
+.stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;}
+.stat-value{font-size:28px;font-weight:800;color:var(--accent2);line-height:1;}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+
+/* PANELS */
+.panels-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:20px;margin-bottom:20px;}
+.panel-title{font-size:14px;font-weight:700;margin-bottom:16px;display:flex;align-items:center;gap:7px;}
+
+/* STARS CHART */
+.star-row{display:flex;align-items:center;gap:9px;margin-bottom:8px;}
+.star-lbl{font-size:13px;color:var(--star);width:76px;text-align:right;flex-shrink:0;}
+.bar-bg{flex:1;height:7px;background:var(--border);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 1.2s ease;}
+.bar-cnt{font-size:12px;color:var(--muted);width:30px;text-align:left;flex-shrink:0;}
+.bar-pct{font-size:11px;color:var(--accent);width:36px;text-align:left;flex-shrink:0;}
+
+/* SUMMARY TABLE */
+.summary-table{width:100%;border-collapse:collapse;}
+.summary-table th{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;padding:8px 12px;border-bottom:1px solid var(--border);text-align:right;font-weight:600;}
+.summary-table td{font-size:13px;padding:10px 12px;border-bottom:1px solid rgba(42,42,63,.5);}
+.summary-table tr:last-child td{border-bottom:none;}
+.summary-table tr:hover td{background:rgba(200,169,110,.04);}
+.branch-name{font-weight:600;color:var(--text);}
+.stars-mini{color:var(--star);font-size:12px;}
+.num-badge{display:inline-flex;align-items:center;justify-content:center;min-width:28px;height:22px;border-radius:6px;font-size:12px;font-weight:700;padding:0 6px;}
+.nb-5{background:rgba(76,175,125,.15);color:var(--green);}
+.nb-4{background:rgba(245,200,66,.12);color:var(--star);}
+.nb-3{background:rgba(90,155,224,.12);color:var(--blue);}
+.nb-2{background:rgba(200,169,110,.12);color:var(--accent);}
+.nb-1{background:rgba(224,90,90,.12);color:var(--red);}
+
+/* REVIEWS */
+.rev-tabs{display:flex;gap:6px;margin-bottom:16px;}
+.rev-tab{padding:7px 16px;border-radius:8px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--muted);transition:all .2s;}
+.rev-tab.active{background:rgba(200,169,110,.12);border-color:var(--accent);color:var(--accent2);}
+.review-item{border-bottom:1px solid var(--border);padding:14px 0;animation:fadeIn .3s ease;}
+.review-item:last-child{border-bottom:none;}
+.review-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px;gap:10px;}
+.rev-info{display:flex;align-items:center;gap:9px;}
+.rev-avatar{width:33px;height:33px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--blue));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#0a0a0f;flex-shrink:0;}
+.rev-name{font-size:13px;font-weight:600;}
+.rev-meta{font-size:11px;color:var(--muted);margin-top:1px;}
+.rev-stars{color:var(--star);font-size:13px;flex-shrink:0;}
+.rev-text{font-size:13px;color:var(--muted);line-height:1.7;padding-right:42px;}
+.branch-badge{font-size:10px;background:rgba(200,169,110,.1);color:var(--accent);padding:2px 7px;border-radius:4px;margin-right:5px;}
+
+/* LOADING / EMPTY */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px;gap:12px;}
+.spinner{width:34px;height:34px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+.loading-text{font-size:13px;color:var(--muted);}
+.empty{text-align:center;padding:48px;color:var(--muted);}
+.empty-icon{font-size:40px;margin-bottom:12px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--card);border:1px solid var(--border);border-radius:11px;padding:12px 20px;font-size:13px;font-weight:500;transition:transform .3s;z-index:999;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.ok{border-color:var(--green);color:var(--green);}
+.toast.err{border-color:var(--red);color:var(--red);}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(5px);}
+.overlay.show{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:17px;padding:30px;max-width:420px;width:90%;animation:fadeIn .3s ease;}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:6px;}
+.modal-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:20px;}
+.form-group{margin-bottom:13px;}
+.form-label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;}
+.form-input{width:100%;padding:10px 13px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Tajawal',sans-serif;font-size:14px;outline:none;transition:border-color .2s;}
+.form-input:focus{border-color:var(--accent);}
+.modal-actions{display:flex;gap:9px;margin-top:18px;}
+.btn-cancel{flex:1;padding:10px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:'Tajawal',sans-serif;font-size:13px;cursor:pointer;}
+.btn-confirm{flex:2;padding:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));border:none;border-radius:8px;color:#0a0a0f;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+
+@media(max-width:700px){.panels-row{grid-template-columns:1fr;}.header{padding:13px 15px;}.container{padding:18px 12px;}.filters{flex-direction:column;}.hdr-btns{width:100%;}}
 </style>
 </head>
 <body>
+
 <header class="header">
   <div class="logo">
     <div class="logo-icon">ر</div>
     <div>
       <div class="logo-text">رشف ريفيوز</div>
-      <div class="logo-sub">تقارير التقييمات الشهرية</div>
+      <div class="logo-sub">تقارير التقييمات</div>
     </div>
   </div>
   <div id="user-bar" style="display:none;align-items:center;gap:10px;">
-    <span id="user-name-lbl" style="font-size:13px;color:var(--text-muted);"></span>
+    <span id="user-lbl" style="font-size:12px;color:var(--muted);"></span>
     <button class="btn-outline" onclick="signOut()">خروج</button>
   </div>
 </header>
+
 <div class="container">
-  <div id="auth-section">
-    <div class="auth-card">
-      <div class="auth-icon">⭐</div>
-      <h1 class="auth-title">تقارير التقييمات</h1>
-      <p class="auth-desc">اضغط الزر لتسجيل الدخول بحساب Google Business وعرض تقييمات جميع فروع رشف وأرميما.</p>
-      <button class="btn-primary" onclick="startAuth()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="#0a0a0f"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-        تسجيل الدخول بـ Google
-      </button>
-    </div>
-  </div>
-  <div id="dashboard-section">
-    <div class="page-header">
-      <div>
-        <h1 class="page-title">تقارير التقييمات</h1>
-        <div class="page-sub" id="period-lbl">آخر 30 يوم</div>
-      </div>
-      <div class="header-actions">
-        <button class="btn-outline" onclick="loadData()">🔄 تحديث</button>
-        <button class="btn-solid" onclick="openEmailModal()">📧 إرسال تقرير</button>
-      </div>
-    </div>
-    <div class="controls">
-      <div class="sel-wrap"><select id="loc-sel" onchange="loadData()"><option value="all">جميع الفروع</option></select></div>
-      <div class="sel-wrap"><select id="period-sel" onchange="loadData()"><option value="30">آخر 30 يوم</option><option value="60">آخر 60 يوم</option><option value="90">آخر 90 يوم</option></select></div>
-    </div>
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-label">إجمالي التقييمات</div><div class="stat-value" id="s-total">-</div><div class="stat-sub">خلال الفترة</div></div>
-      <div class="stat-card"><div class="stat-label">متوسط التقييم</div><div class="stat-value" id="s-avg">-</div><div class="stat-sub">من 5 نجوم</div></div>
-      <div class="stat-card"><div class="stat-label">تقييمات 5 ⭐</div><div class="stat-value" id="s-five">-</div><div class="stat-sub" id="s-five-pct">-</div></div>
-      <div class="stat-card"><div class="stat-label">عدد الفروع</div><div class="stat-value" id="s-branches">-</div><div class="stat-sub">فرع نشط</div></div>
-    </div>
-    <div class="panel"><div class="panel-title">⭐ توزيع النجوم</div><div id="stars-chart"><div class="loading"><div class="spinner"></div></div></div></div>
-    <div class="panel"><div class="panel-title">💬 التعليقات</div><div id="reviews-list"><div class="loading"><div class="spinner"></div><div class="loading-text">جاري التحميل...</div></div></div></div>
+
+<!-- AUTH -->
+<div id="auth-section">
+  <div class="auth-card">
+    <div class="auth-icon">⭐</div>
+    <h1 class="auth-title">تقارير التقييمات</h1>
+    <p class="auth-desc">اربط حساب Google Business لعرض تقييمات جميع الفروع وإرسال تقارير شهرية.</p>
+    <button class="btn-google" onclick="startAuth()">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="#0a0a0f"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      تسجيل الدخول بـ Google
+    </button>
   </div>
 </div>
+
+<!-- DASHBOARD -->
+<div id="dash">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">تقارير التقييمات</h1>
+      <div class="page-sub" id="period-lbl">-</div>
+    </div>
+    <div class="hdr-btns">
+      <button class="btn-outline" onclick="applyFilters()">🔄 تحديث</button>
+      <button class="btn-solid" onclick="openEmail()">📧 إرسال تقرير</button>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <div class="filter-group">
+      <div class="filter-label">الفرع</div>
+      <div class="sel-wrap">
+        <select id="loc-sel">
+          <option value="all">جميع الفروع</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-label">اختيار سريع</div>
+      <div class="quick-btns">
+        <button class="qbtn" onclick="setQuick('curr')" id="qb-curr">الشهر الحالي</button>
+        <button class="qbtn" onclick="setQuick('prev')" id="qb-prev">الشهر السابق</button>
+        <button class="qbtn active" onclick="setQuick('30')" id="qb-30">آخر 30 يوم</button>
+        <button class="qbtn" onclick="setQuick('90')" id="qb-90">آخر 90 يوم</button>
+        <button class="qbtn" onclick="setQuick('custom')" id="qb-custom">مخصص</button>
+      </div>
+    </div>
+
+    <div class="filter-group" id="custom-dates" style="display:none;">
+      <div class="filter-label">من</div>
+      <input type="date" class="filter-input" id="date-from">
+    </div>
+    <div class="filter-group" id="custom-dates2" style="display:none;">
+      <div class="filter-label">إلى</div>
+      <input type="date" class="filter-input" id="date-to">
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-label">&nbsp;</div>
+      <button class="btn-apply" onclick="applyFilters()">تطبيق الفلتر</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">إجمالي التقييمات</div><div class="stat-value" id="s-total">-</div><div class="stat-sub" id="s-period-sub">-</div></div>
+    <div class="stat-card"><div class="stat-label">متوسط التقييم</div><div class="stat-value" id="s-avg">-</div><div class="stat-sub">من 5 نجوم</div></div>
+    <div class="stat-card"><div class="stat-label">تقييمات 5 ⭐</div><div class="stat-value" id="s-five">-</div><div class="stat-sub" id="s-five-pct">-</div></div>
+    <div class="stat-card"><div class="stat-label">مع تعليق</div><div class="stat-value" id="s-withcomment">-</div><div class="stat-sub" id="s-withcomment-pct">-</div></div>
+    <div class="stat-card"><div class="stat-label">بدون تعليق</div><div class="stat-value" id="s-nocomment">-</div><div class="stat-sub" id="s-nocomment-pct">-</div></div>
+    <div class="stat-card"><div class="stat-label">عدد الفروع</div><div class="stat-value" id="s-branches">-</div><div class="stat-sub">فرع</div></div>
+  </div>
+
+  <!-- STARS + SUMMARY ROW -->
+  <div class="panels-row">
+    <div class="panel">
+      <div class="panel-title">⭐ توزيع النجوم</div>
+      <div id="stars-chart"><div class="loading"><div class="spinner"></div></div></div>
+    </div>
+    <div class="panel">
+      <div class="panel-title">📊 ملخص الفروع</div>
+      <div id="summary-table"><div class="loading"><div class="spinner"></div></div></div>
+    </div>
+  </div>
+
+  <!-- REVIEWS -->
+  <div class="panel">
+    <div class="panel-title">💬 التعليقات</div>
+    <div class="rev-tabs">
+      <button class="rev-tab active" onclick="filterReviews('all',this)">الكل <span id="tab-all-cnt"></span></button>
+      <button class="rev-tab" onclick="filterReviews('with',this)">مع تعليق <span id="tab-with-cnt"></span></button>
+      <button class="rev-tab" onclick="filterReviews('without',this)">بدون تعليق <span id="tab-without-cnt"></span></button>
+    </div>
+    <div id="reviews-list"><div class="loading"><div class="spinner"></div><div class="loading-text">جاري التحميل...</div></div></div>
+  </div>
+</div>
+</div>
+
+<!-- EMAIL MODAL -->
 <div class="overlay" id="email-overlay">
   <div class="modal">
     <h2 class="modal-title">📧 إرسال تقرير شهري</h2>
-    <p class="modal-desc">تقرير كامل بتقييمات آخر شهر لجميع الفروع.</p>
+    <p class="modal-desc">تقرير كامل بالتقييمات لجميع الفروع.</p>
     <div class="form-group"><label class="form-label">الإيميل</label><input type="email" class="form-input" id="email-inp" value="SalehalThunayan1@gmail.com"></div>
     <div class="form-group"><label class="form-label">موعد الإرسال التلقائي</label><select class="form-input"><option>أول كل شهر</option><option>منتصف الشهر</option><option>آخر يوم من الشهر</option></select></div>
-    <div class="modal-actions"><button class="btn-cancel" onclick="closeEmailModal()">إلغاء</button><button class="btn-confirm" onclick="sendReport()">إرسال الآن</button></div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeEmail()">إلغاء</button>
+      <button class="btn-confirm" onclick="sendReport()">إرسال الآن</button>
+    </div>
   </div>
 </div>
+
 <div class="toast" id="toast"></div>
+
 <script>
-const CLIENT_ID='86859439948-s7s3qrdmcuk4qfknac540d9i647hk09i.apps.googleusercontent.com';
-const CLIENT_SECRET='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';
-const REDIRECT_URI='https://saleh-althunayan.github.io/rashf-reviews/rashf-reviews.html';
-const SCOPES='https://www.googleapis.com/auth/business.manage https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
-let accessToken=null,allLocations=[];
-function startAuth(){
-  const state=Math.random().toString(36).slice(2);
-  sessionStorage.setItem('oauth_state',state);
-  window.location.href=`https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(CLIENT_ID)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(SCOPES)}&state=${state}&access_type=offline&prompt=consent`;
+const CLIENT_ID     = '86859439948-s7s3qrdmcuk4qfknac540d9i647hk09i.apps.googleusercontent.com';
+const CLIENT_SECRET = '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';
+const REDIRECT_URI  = 'https://saleh-althunayan.github.io/rashf-reviews/rashf-reviews.html';
+const SCOPES        = 'https://www.googleapis.com/auth/business.manage https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile';
+
+let accessToken  = null;
+let allLocations = [];
+let allReviews   = [];
+let currentMode  = '30'; // '30','90','curr','prev','custom'
+
+// ── DATE HELPERS ──
+function getDateRange(mode) {
+  const now = new Date();
+  let from, to = new Date();
+  if (mode === '30') {
+    from = new Date(); from.setDate(from.getDate() - 30);
+  } else if (mode === '90') {
+    from = new Date(); from.setDate(from.getDate() - 90);
+  } else if (mode === 'curr') {
+    from = new Date(now.getFullYear(), now.getMonth(), 1);
+    to   = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+  } else if (mode === 'prev') {
+    from = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    to   = new Date(now.getFullYear(), now.getMonth(), 0);
+  } else if (mode === 'custom') {
+    from = new Date(document.getElementById('date-from').value);
+    to   = new Date(document.getElementById('date-to').value);
+  }
+  to.setHours(23,59,59,999);
+  return {from, to};
 }
-async function handleCallback(){
-  const params=new URLSearchParams(window.location.search);
-  const code=params.get('code');
-  if(!code)return;
-  window.history.replaceState({},document.title,window.location.pathname);
-  toast('🔄 جاري تسجيل الدخول...','ok');
-  try{
-    const res=await fetch('https://oauth2.googleapis.com/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({code,client_id:CLIENT_ID,client_secret:CLIENT_SECRET,redirect_uri:REDIRECT_URI,grant_type:'authorization_code'})});
-    const data=await res.json();
-    if(data.error)throw new Error(data.error_description||data.error);
-    accessToken=data.access_token;
-    if(data.refresh_token)localStorage.setItem('refresh_token',data.refresh_token);
-    localStorage.setItem('access_token',accessToken);
+
+function formatDate(d) {
+  return d.toLocaleDateString('ar-SA');
+}
+
+// ── QUICK BUTTONS ──
+function setQuick(mode) {
+  currentMode = mode;
+  ['curr','prev','30','90','custom'].forEach(m => {
+    const el = document.getElementById('qb-' + m);
+    if(el) el.classList.toggle('active', m === mode);
+  });
+  const isCustom = mode === 'custom';
+  document.getElementById('custom-dates').style.display  = isCustom ? 'flex' : 'none';
+  document.getElementById('custom-dates2').style.display = isCustom ? 'flex' : 'none';
+
+  if (mode !== 'custom') applyFilters();
+}
+
+// ── AUTH ──
+function startAuth() {
+  const state = Math.random().toString(36).slice(2);
+  sessionStorage.setItem('oauth_state', state);
+  window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${encodeURIComponent(CLIENT_ID)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&response_type=code&scope=${encodeURIComponent(SCOPES)}&state=${state}&access_type=offline&prompt=consent`;
+}
+
+async function handleCallback() {
+  const params = new URLSearchParams(window.location.search);
+  const code = params.get('code');
+  if (!code) return;
+  window.history.replaceState({}, document.title, window.location.pathname);
+  toast('🔄 جاري تسجيل الدخول...', 'ok');
+  try {
+    const res = await fetch('https://oauth2.googleapis.com/token', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({code, client_id: CLIENT_ID, client_secret: CLIENT_SECRET, redirect_uri: REDIRECT_URI, grant_type: 'authorization_code'})
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error_description || data.error);
+    accessToken = data.access_token;
+    if (data.refresh_token) localStorage.setItem('rt', data.refresh_token);
+    localStorage.setItem('at', accessToken);
     await onSignedIn();
-  }catch(e){toast('خطأ: '+e.message,'err');}
+  } catch(e) { toast('خطأ: ' + e.message, 'err'); }
 }
-async function tryRestoreSession(){
-  const stored=localStorage.getItem('access_token');
-  if(!stored)return false;
-  accessToken=stored;
-  try{await apiFetch('https://www.googleapis.com/oauth2/v2/userinfo');return true;}
-  catch{
-    const rt=localStorage.getItem('refresh_token');
-    if(!rt)return false;
-    try{
-      const res=await fetch('https://oauth2.googleapis.com/token',{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:new URLSearchParams({refresh_token:rt,client_id:CLIENT_ID,client_secret:CLIENT_SECRET,grant_type:'refresh_token'})});
-      const data=await res.json();
-      if(data.access_token){accessToken=data.access_token;localStorage.setItem('access_token',accessToken);return true;}
-    }catch{}
+
+async function tryRestore() {
+  const at = localStorage.getItem('at');
+  if (!at) return false;
+  accessToken = at;
+  try { await apiFetch('https://www.googleapis.com/oauth2/v2/userinfo'); return true; }
+  catch {
+    const rt = localStorage.getItem('rt');
+    if (!rt) return false;
+    try {
+      const res = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+        body: new URLSearchParams({refresh_token: rt, client_id: CLIENT_ID, client_secret: CLIENT_SECRET, grant_type: 'refresh_token'})
+      });
+      const data = await res.json();
+      if (data.access_token) {
+        accessToken = data.access_token;
+        localStorage.setItem('at', accessToken);
+        return true;
+      }
+    } catch {}
     return false;
   }
 }
-async function onSignedIn(){
-  const user=await apiFetch('https://www.googleapis.com/oauth2/v2/userinfo');
-  document.getElementById('user-name-lbl').textContent=user.name||user.email;
-  document.getElementById('user-bar').style.display='flex';
-  document.getElementById('auth-section').style.display='none';
-  document.getElementById('dashboard-section').style.display='block';
-  toast('✅ تم الربط بنجاح!','ok');
-  fetchLocations();
+
+async function onSignedIn() {
+  const user = await apiFetch('https://www.googleapis.com/oauth2/v2/userinfo');
+  document.getElementById('user-lbl').textContent = user.name || user.email;
+  document.getElementById('user-bar').style.display = 'flex';
+  document.getElementById('auth-section').style.display = 'none';
+  document.getElementById('dash').style.display = 'block';
+  toast('✅ تم الربط بنجاح!', 'ok');
+  await fetchLocations();
 }
-function signOut(){localStorage.removeItem('access_token');localStorage.removeItem('refresh_token');accessToken=null;allLocations=[];document.getElementById('auth-section').style.display='flex';document.getElementById('dashboard-section').style.display='none';document.getElementById('user-bar').style.display='none';}
-async function fetchLocations(){
-  try{
-    const accs=await apiFetch('https://mybusinessaccountmanagement.googleapis.com/v1/accounts');
-    if(!accs.accounts?.length){loadDemo('لا توجد حسابات Business');return;}
-    const accName=accs.accounts[0].name;
-    const locs=await apiFetch(`https://mybusinessbusinessinformation.googleapis.com/v1/${accName}/locations?readMask=name,title`);
-    allLocations=(locs.locations||[]).map(l=>({...l,_accName:accName}));
-    document.getElementById('s-branches').textContent=allLocations.length;
-    const sel=document.getElementById('loc-sel');
-    sel.innerHTML='<option value="all">جميع الفروع</option>';
-    allLocations.forEach(l=>{const o=document.createElement('option');o.value=l.name;o.textContent=l.title;sel.appendChild(o);});
-    loadData();
-  }catch(e){console.error(e);loadDemo('خطأ في تحميل الفروع');}
+
+function signOut() {
+  localStorage.removeItem('at'); localStorage.removeItem('rt');
+  accessToken = null; allLocations = []; allReviews = [];
+  document.getElementById('auth-section').style.display = 'flex';
+  document.getElementById('dash').style.display = 'none';
+  document.getElementById('user-bar').style.display = 'none';
 }
-async function loadData(){
-  const locVal=document.getElementById('loc-sel').value;
-  const days=parseInt(document.getElementById('period-sel').value);
-  document.getElementById('period-lbl').textContent=`آخر ${days} يوم`;
+
+// ── LOCATIONS ──
+async function fetchLocations() {
+  try {
+    const accs = await apiFetch('https://mybusinessaccountmanagement.googleapis.com/v1/accounts');
+    if (!accs.accounts?.length) { loadDemo('لا توجد حسابات'); return; }
+
+    // Fetch ALL pages of locations
+    const accName = accs.accounts[0].name;
+    let locs = [], pageToken = null;
+    do {
+      let url = `https://mybusinessbusinessinformation.googleapis.com/v1/${accName}/locations?readMask=name,title&pageSize=100`;
+      if (pageToken) url += `&pageToken=${pageToken}`;
+      const d = await apiFetch(url);
+      locs = locs.concat(d.locations || []);
+      pageToken = d.nextPageToken;
+    } while (pageToken);
+
+    allLocations = locs.map(l => ({...l, _accName: accName}));
+    document.getElementById('s-branches').textContent = allLocations.length;
+
+    const sel = document.getElementById('loc-sel');
+    sel.innerHTML = '<option value="all">جميع الفروع</option>';
+    allLocations.forEach(l => {
+      const o = document.createElement('option');
+      o.value = l.name; o.textContent = l.title; sel.appendChild(o);
+    });
+
+    await applyFilters();
+  } catch(e) {
+    console.error(e);
+    loadDemo('خطأ في تحميل الفروع');
+  }
+}
+
+// ── APPLY FILTERS ──
+async function applyFilters() {
+  const locVal = document.getElementById('loc-sel').value;
+  const {from, to} = getDateRange(currentMode);
+
+  const modeLabels = {
+    '30': 'آخر 30 يوم',
+    '90': 'آخر 90 يوم',
+    'curr': 'الشهر الحالي',
+    'prev': 'الشهر السابق',
+    'custom': 'فترة مخصصة'
+  };
+  document.getElementById('period-lbl').textContent = `${modeLabels[currentMode]} — ${formatDate(from)} إلى ${formatDate(to)}`;
+  document.getElementById('s-period-sub').textContent = `${formatDate(from)} — ${formatDate(to)}`;
+
   setLoading();
-  const cutoff=new Date();cutoff.setDate(cutoff.getDate()-days);
-  const locs=locVal==='all'?allLocations:allLocations.filter(l=>l.name===locVal);
-  let reviews=[];
-  try{
-    for(const loc of locs){
-      const parts=loc.name.split('/');const accId=parts[1],locId=parts[3];let pageToken=null;
-      do{
-        let url=`https://mybusiness.googleapis.com/v4/accounts/${accId}/locations/${locId}/reviews?pageSize=50`;
-        if(pageToken)url+=`&pageToken=${pageToken}`;
-        const d=await apiFetch(url);
-        (d.reviews||[]).filter(r=>new Date(r.updateTime||r.createTime)>=cutoff).forEach(r=>{r._branch=loc.title;reviews.push(r);});
-        pageToken=d.nextPageToken;
-      }while(pageToken);
+
+  const locs = locVal === 'all' ? allLocations : allLocations.filter(l => l.name === locVal);
+  let reviews = [];
+
+  try {
+    for (const loc of locs) {
+      const parts = loc.name.split('/');
+      const accId = parts[1], locId = parts[3];
+      let pageToken = null;
+      do {
+        let url = `https://mybusiness.googleapis.com/v4/accounts/${accId}/locations/${locId}/reviews?pageSize=50`;
+        if (pageToken) url += `&pageToken=${pageToken}`;
+        const d = await apiFetch(url);
+        (d.reviews || [])
+          .filter(r => {
+            const dt = new Date(r.updateTime || r.createTime);
+            return dt >= from && dt <= to;
+          })
+          .forEach(r => { r._branch = loc.title; reviews.push(r); });
+        pageToken = d.nextPageToken;
+      } while (pageToken);
     }
-    renderDashboard(reviews);
-  }catch(e){console.error(e);loadDemo('خطأ في تحميل التقييمات');}
+    allReviews = reviews;
+    renderAll(reviews);
+  } catch(e) {
+    console.error(e);
+    loadDemo('خطأ في تحميل التقييمات');
+  }
 }
-function renderDashboard(reviews){
-  document.getElementById('s-total').textContent=reviews.length;
-  const SM={FIVE:5,FOUR:4,THREE:3,TWO:2,ONE:1};const cnt={5:0,4:0,3:0,2:0,1:0};let total=0;
-  reviews.forEach(r=>{const n=SM[r.starRating]||parseInt(r.starRating)||0;if(n>=1&&n<=5){cnt[n]++;total+=n;}});
-  const avg=reviews.length?(total/reviews.length).toFixed(1):'-';
-  document.getElementById('s-avg').textContent=reviews.length?avg+' ★':'-';
-  document.getElementById('s-five').textContent=cnt[5];
-  const pct=reviews.length?Math.round(cnt[5]/reviews.length*100):0;
-  document.getElementById('s-five-pct').textContent=pct+'% من الكل';
-  const max=Math.max(...Object.values(cnt),1);
-  document.getElementById('stars-chart').innerHTML=[5,4,3,2,1].map(s=>`<div class="star-row"><div class="star-lbl">${'★'.repeat(s)}${'☆'.repeat(5-s)}</div><div class="bar-bg"><div class="bar-fill" style="width:${cnt[s]/max*100}%"></div></div><div class="bar-cnt">${cnt[s]}</div></div>`).join('');
-  if(!reviews.length){document.getElementById('reviews-list').innerHTML=`<div class="empty"><div class="empty-icon">📭</div><div>لا توجد تعليقات</div></div>`;return;}
-  const sorted=[...reviews].sort((a,b)=>new Date(b.updateTime||b.createTime)-new Date(a.updateTime||a.createTime));
-  document.getElementById('reviews-list').innerHTML=sorted.map(r=>{
-    const nm=r.reviewer?.displayName||'مجهول';const n=SM[r.starRating]||parseInt(r.starRating)||0;const dt=new Date(r.updateTime||r.createTime).toLocaleDateString('ar-SA');
-    return`<div class="review-item"><div class="review-top"><div class="rev-info"><div class="rev-avatar">${nm.charAt(0)}</div><div><div class="rev-name">${r._branch?`<span class="branch-badge">${r._branch}</span>`:''} ${nm}</div><div class="rev-meta">${dt}</div></div></div><div class="rev-stars">${'★'.repeat(n)}${'☆'.repeat(5-n)}</div></div><div class="rev-text">${r.comment||'<i style="opacity:.5">بدون تعليق</i>'}</div></div>`;
+
+// ── RENDER ALL ──
+function renderAll(reviews) {
+  const SM = {FIVE:5, FOUR:4, THREE:3, TWO:2, ONE:1};
+  const cnt = {5:0,4:0,3:0,2:0,1:0};
+  let total = 0;
+  const withComment    = reviews.filter(r => r.comment && r.comment.trim());
+  const withoutComment = reviews.filter(r => !r.comment || !r.comment.trim());
+
+  reviews.forEach(r => {
+    const n = SM[r.starRating] || parseInt(r.starRating) || 0;
+    if (n >= 1 && n <= 5) { cnt[n]++; total += n; }
+  });
+
+  // Stats
+  document.getElementById('s-total').textContent = reviews.length;
+  const avg = reviews.length ? (total/reviews.length).toFixed(1) : '-';
+  document.getElementById('s-avg').textContent = reviews.length ? avg + ' ★' : '-';
+  document.getElementById('s-five').textContent = cnt[5];
+  const pct5 = reviews.length ? Math.round(cnt[5]/reviews.length*100) : 0;
+  document.getElementById('s-five-pct').textContent = pct5 + '% من الكل';
+  document.getElementById('s-withcomment').textContent = withComment.length;
+  document.getElementById('s-withcomment-pct').textContent = reviews.length ? Math.round(withComment.length/reviews.length*100) + '%' : '-';
+  document.getElementById('s-nocomment').textContent = withoutComment.length;
+  document.getElementById('s-nocomment-pct').textContent = reviews.length ? Math.round(withoutComment.length/reviews.length*100) + '%' : '-';
+
+  // Tab counts
+  document.getElementById('tab-all-cnt').textContent = `(${reviews.length})`;
+  document.getElementById('tab-with-cnt').textContent = `(${withComment.length})`;
+  document.getElementById('tab-without-cnt').textContent = `(${withoutComment.length})`;
+
+  // Stars chart
+  const max = Math.max(...Object.values(cnt), 1);
+  document.getElementById('stars-chart').innerHTML = [5,4,3,2,1].map(s => {
+    const p = reviews.length ? Math.round(cnt[s]/reviews.length*100) : 0;
+    return `<div class="star-row">
+      <div class="star-lbl">${'★'.repeat(s)}${'☆'.repeat(5-s)}</div>
+      <div class="bar-bg"><div class="bar-fill" style="width:${cnt[s]/max*100}%"></div></div>
+      <div class="bar-cnt">${cnt[s]}</div>
+      <div class="bar-pct">${p}%</div>
+    </div>`;
+  }).join('');
+
+  // Summary table by branch
+  const branchMap = {};
+  reviews.forEach(r => {
+    const b = r._branch || 'غير محدد';
+    if (!branchMap[b]) branchMap[b] = {total:0, stars:{5:0,4:0,3:0,2:0,1:0}, sum:0};
+    const n = SM[r.starRating] || parseInt(r.starRating) || 0;
+    branchMap[b].total++;
+    if (n>=1&&n<=5) { branchMap[b].stars[n]++; branchMap[b].sum+=n; }
+  });
+
+  const sortedBranches = Object.entries(branchMap).sort((a,b) => b[1].total - a[1].total);
+  if (!sortedBranches.length) {
+    document.getElementById('summary-table').innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div>لا توجد بيانات</div></div>`;
+  } else {
+    document.getElementById('summary-table').innerHTML = `
+      <div style="overflow-x:auto;">
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th>الفرع</th>
+            <th>الكل</th>
+            <th><span style="color:var(--green)">★★★★★</span></th>
+            <th><span style="color:var(--star)">★★★★</span></th>
+            <th><span style="color:var(--blue)">★★★</span></th>
+            <th><span style="color:var(--accent)">★★</span></th>
+            <th><span style="color:var(--red)">★</span></th>
+            <th>المتوسط</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${sortedBranches.map(([b,d]) => `
+            <tr>
+              <td class="branch-name">${b}</td>
+              <td><strong>${d.total}</strong></td>
+              <td><span class="num-badge nb-5">${d.stars[5]}</span></td>
+              <td><span class="num-badge nb-4">${d.stars[4]}</span></td>
+              <td><span class="num-badge nb-3">${d.stars[3]}</span></td>
+              <td><span class="num-badge nb-2">${d.stars[2]}</span></td>
+              <td><span class="num-badge nb-1">${d.stars[1]}</span></td>
+              <td>${d.total ? (d.sum/d.total).toFixed(1)+' ★' : '-'}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table></div>`;
+  }
+
+  // Reviews
+  renderReviewsList(reviews, 'all');
+}
+
+function filterReviews(type, btn) {
+  document.querySelectorAll('.rev-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  renderReviewsList(allReviews, type);
+}
+
+function renderReviewsList(reviews, type) {
+  const SM = {FIVE:5, FOUR:4, THREE:3, TWO:2, ONE:1};
+  let filtered = reviews;
+  if (type === 'with')    filtered = reviews.filter(r => r.comment && r.comment.trim());
+  if (type === 'without') filtered = reviews.filter(r => !r.comment || !r.comment.trim());
+
+  if (!filtered.length) {
+    document.getElementById('reviews-list').innerHTML = `<div class="empty"><div class="empty-icon">📭</div><div>لا توجد تعليقات</div></div>`;
+    return;
+  }
+
+  const sorted = [...filtered].sort((a,b) => new Date(b.updateTime||b.createTime) - new Date(a.updateTime||a.createTime));
+  document.getElementById('reviews-list').innerHTML = sorted.map(r => {
+    const nm = r.reviewer?.displayName || 'مجهول';
+    const n  = SM[r.starRating] || parseInt(r.starRating) || 0;
+    const dt = new Date(r.updateTime||r.createTime).toLocaleDateString('ar-SA');
+    return `<div class="review-item">
+      <div class="review-top">
+        <div class="rev-info">
+          <div class="rev-avatar">${nm.charAt(0)}</div>
+          <div>
+            <div class="rev-name">${r._branch?`<span class="branch-badge">${r._branch}</span>`:''} ${nm}</div>
+            <div class="rev-meta">${dt}</div>
+          </div>
+        </div>
+        <div class="rev-stars">${'★'.repeat(n)}${'☆'.repeat(5-n)}</div>
+      </div>
+      <div class="rev-text">${r.comment||'<i style="opacity:.4">بدون تعليق</i>'}</div>
+    </div>`;
   }).join('');
 }
-function loadDemo(msg){
-  if(msg)toast('⚠️ '+msg,'err');
-  const branches=['بريدة الرئيسي','عنيزة','الرس','المذنب','البكيرية','بريدة النزهة','الرس روسيل','رياض الخبراء'];
-  document.getElementById('s-branches').textContent=branches.length;
-  const sel=document.getElementById('loc-sel');sel.innerHTML='<option value="all">جميع الفروع</option>';
-  branches.forEach(b=>{const o=document.createElement('option');o.value=b;o.textContent=b;sel.appendChild(o);});
-  const names=['أحمد العتيبي','سارة الدوسري','فهد الشمري','نورة القحطاني','خالد السبيعي','ريم المطيري'];
-  const comments=['قهوة رائعة وخدمة سريعة!','تجربة ممتازة كالعادة','أفضل كافيه في المنطقة','خدمة جيدة',null,'يستاهل الزيارة'];
-  const stars=['FIVE','FIVE','FOUR','FIVE','THREE','FOUR','TWO','FIVE'];
-  const demo=Array.from({length:58},(_,i)=>({reviewer:{displayName:names[i%names.length]},starRating:stars[i%stars.length],comment:comments[i%comments.length],updateTime:new Date(Date.now()-Math.random()*30*864e5).toISOString(),_branch:branches[i%branches.length]}));
-  renderDashboard(demo);
+
+// ── DEMO ──
+function loadDemo(msg) {
+  if (msg) toast('⚠️ ' + msg + ' — بيانات تجريبية', 'err');
+  const branches = ['بريدة الرئيسي','عنيزة','الرس','المذنب','البكيرية','بريدة النزهة','الرس روسيل','رياض الخبراء','عيون الجواء','الشماسية','البدائع'];
+  document.getElementById('s-branches').textContent = branches.length;
+  const sel = document.getElementById('loc-sel');
+  sel.innerHTML = '<option value="all">جميع الفروع</option>';
+  branches.forEach(b => { const o=document.createElement('option'); o.value=b; o.textContent=b; sel.appendChild(o); });
+  const names = ['أحمد العتيبي','سارة الدوسري','فهد الشمري','نورة القحطاني','خالد السبيعي','ريم المطيري','عبدالله الحربي','منى الزهراني'];
+  const comments = ['قهوة رائعة وخدمة سريعة!','تجربة ممتازة','أفضل كافيه في المنطقة','خدمة جيدة والمكان نظيف',null,'يستاهل الزيارة',null,'القهوة حلوة لكن الانتظار طال'];
+  const stars = ['FIVE','FIVE','FOUR','FIVE','THREE','FOUR','TWO','FIVE','FIVE','FOUR'];
+  const now = new Date();
+  const demo = Array.from({length:87},(_,i) => ({
+    reviewer: {displayName: names[i%names.length]},
+    starRating: stars[i%stars.length],
+    comment: comments[i%comments.length],
+    updateTime: new Date(now.getFullYear(), now.getMonth()-Math.floor(i/30), now.getDate()-i%28).toISOString(),
+    _branch: branches[i%branches.length]
+  }));
+  allReviews = demo;
+  renderAll(demo);
 }
-function setLoading(){document.getElementById('reviews-list').innerHTML=`<div class="loading"><div class="spinner"></div><div class="loading-text">جاري التحميل...</div></div>`;document.getElementById('stars-chart').innerHTML=`<div class="loading"><div class="spinner"></div></div>`;}
-async function apiFetch(url){const r=await fetch(url,{headers:{Authorization:`Bearer ${accessToken}`}});if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}
-function openEmailModal(){document.getElementById('email-overlay').classList.add('show');}
-function closeEmailModal(){document.getElementById('email-overlay').classList.remove('show');}
-function sendReport(){const em=document.getElementById('email-inp').value;if(!em){toast('أدخل الإيميل','err');return;}closeEmailModal();toast(`✅ سيتم إرسال التقرير إلى ${em}`,'ok');}
-function toast(msg,type='ok'){const el=document.getElementById('toast');el.textContent=msg;el.className=`toast ${type} show`;setTimeout(()=>el.classList.remove('show'),4500);}
-(async()=>{if(window.location.search.includes('code=')){await handleCallback();}else{const restored=await tryRestoreSession();if(restored)await onSignedIn();}})();
+
+// ── HELPERS ──
+function setLoading() {
+  document.getElementById('reviews-list').innerHTML = `<div class="loading"><div class="spinner"></div><div class="loading-text">جاري التحميل...</div></div>`;
+  document.getElementById('stars-chart').innerHTML  = `<div class="loading"><div class="spinner"></div></div>`;
+  document.getElementById('summary-table').innerHTML = `<div class="loading"><div class="spinner"></div></div>`;
+}
+
+async function apiFetch(url) {
+  const r = await fetch(url, {headers:{Authorization:`Bearer ${accessToken}`}});
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+
+function openEmail()  { document.getElementById('email-overlay').classList.add('show'); }
+function closeEmail() { document.getElementById('email-overlay').classList.remove('show'); }
+function sendReport() {
+  const em = document.getElementById('email-inp').value;
+  if (!em) { toast('أدخل الإيميل', 'err'); return; }
+  closeEmail();
+  toast(`✅ سيتم إرسال التقرير إلى ${em}`, 'ok');
+}
+
+function toast(msg, type='ok') {
+  const el = document.getElementById('toast');
+  el.textContent = msg; el.className = `toast ${type} show`;
+  setTimeout(() => el.classList.remove('show'), 4500);
+}
+
+// ── INIT ──
+(async () => {
+  if (window.location.search.includes('code=')) {
+    await handleCallback();
+  } else {
+    const ok = await tryRestore();
+    if (ok) await onSignedIn();
+  }
+})();
 </script>
 </body>
 </html>
